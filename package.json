@@ -34,6 +34,8 @@
   "homepage": "https://github.com/Eccoar/2020.2-Eccoar_Reports#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "handlebars": "^4.7.7",
+    "html-to-pdf": "^0.1.11"
   }
 }
