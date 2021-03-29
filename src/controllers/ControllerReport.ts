@@ -14,14 +14,19 @@ export class ControllerReport {
     async createReport(req: Request, resp: Response): Promise<void>{
         try {
 
+            const img = readFileSync('src/assets/logo.png').toString('base64');
 
             const reportTemplate = readFileSync('src/templates/report.handlebars', 'utf-8');
 
-            let data = req.body;
+            let data = {...req.body, img: `data:image/png;base64,${img}`};
             const htmlDelegate = handlebars.compile(reportTemplate);
             const html = htmlDelegate(data);
-            
-            const options: CreateOptions = {};
+
+
+            const options: CreateOptions = {
+                height: `${(data.complaints.length * 500) + 250}px`,
+                width: '900px'
+            };
 
             createPDF(html, options).toStream((err, stream) => {
                 if(err) return resp.status(400).json({"message": err});
@@ -34,6 +39,8 @@ export class ControllerReport {
                 });
                 stream.pipe(resp);
             });
+
+            //resp.send(html);
         } catch(err) {
             console.error(err);
             resp.status(400).json({'msg': err});
