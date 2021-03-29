@@ -51,9 +51,16 @@
             margin-top: 10px;
         }
 
-        .container {
+        .containerImage {
             height: 500px;
             max-height: 500px;
+            width: 900px;
+            padding: 2rem;
+        }
+
+        .container {
+            height: 290px;
+            max-height: 290px;
             width: 900px;
             padding: 2rem;
         }
@@ -81,12 +88,14 @@
     </div>
     <div class="page">
         {{#each complaints}}
-            <div class="container">
+            <div class="{{#if (exists image)}}containerImage{{else}}container{{/if}}">
                 <h1>{{title}}</h1>
                 <h3>Denúncia criada em {{date}}</h3>
                 <h3>{{votes}} pessoas reportaram esse problema</h3>
                 <p>{{description}}</p>
-                <img src="{{image}}" alt="Imagem" />
+                {{#if (exists image)}}
+                    <img src="data:image/png;base64,{{image}}" />
+                {{/if}}
                 <div class="divider"></div>
             </div>
         {{/each}}

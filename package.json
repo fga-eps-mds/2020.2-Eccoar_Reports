@@ -37,6 +37,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "handlebars": "^4.7.7",
-    "html-pdf": "^2.2.0"
+    "html-pdf": "^2.2.0",
+    "image-to-base64": "^2.1.1"
   }
 }
