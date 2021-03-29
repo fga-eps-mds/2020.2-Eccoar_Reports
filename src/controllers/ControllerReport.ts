@@ -31,16 +31,10 @@ export class ControllerReport {
             createPDF(html, options).toStream((err, stream) => {
                 if(err) return resp.status(400).json({"message": err});
 
-                stream.pipe(createWriteStream('./file.pdf'));
-
-                resp.statusCode = 201;
-                stream.on('end', () => {
-                    resp.end();
-                });
-                stream.pipe(resp);
+                stream.pipe(createWriteStream(`src/${req.body.category}.pdf`));
             });
 
-            //resp.send(html);
+            resp.status(201).json({"msg": `Report created at src/${req.body.category}.pdf`})
         } catch(err) {
             console.error(err);
             resp.status(400).json({'msg': err});
