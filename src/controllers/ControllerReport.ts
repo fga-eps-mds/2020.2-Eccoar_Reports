@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import handlebars from 'handlebars';
+import {compile as compileHTML} from 'handlebars';
 import { create as createPDF, CreateOptions, FileInfo } from 'html-pdf';
 import {readFileSync, createWriteStream} from 'graceful-fs';
 
@@ -19,7 +19,7 @@ export class ControllerReport {
             const reportTemplate = readFileSync('src/templates/report.handlebars', 'utf-8');
 
             let data = {...req.body, img: `data:image/png;base64,${img}`};
-            const htmlDelegate = handlebars.compile(reportTemplate);
+            const htmlDelegate = compileHTML(reportTemplate);
             const html = htmlDelegate(data);
 
 
@@ -34,9 +34,8 @@ export class ControllerReport {
                 stream.pipe(createWriteStream(`src/${req.body.category}.pdf`));
             });
 
-            resp.status(201).json({"msg": `Report created at src/${req.body.category}.pdf`})
+            resp.status(201).json({"msg": `Report created at src/${req.body.category}.pdf`});
         } catch(err) {
-            console.error(err);
             resp.status(400).json({'msg': err});
         }
     }
