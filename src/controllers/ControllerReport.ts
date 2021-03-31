@@ -12,6 +12,31 @@ export class ControllerReport {
         resp.status(200).json(pingPong);
     }
 
+    async convertImageToBase64(complaints: any) {
+        let height = 0;
+        let base64Resolve = [];
+        for(let i = 0; i < complaints.length; i++) {
+            if(complaints[i].image !== null) {
+                base64Resolve.push(imageToBase64(complaints[i].image));
+                height+=500;
+            }
+            else {
+                height+=290;
+            }
+        }
+        await Promise.all(base64Resolve);
+        for(let i = 0; i < complaints.length; i++) {
+            if(complaints[i].image !== null) {
+                complaints[i].image = base64Resolve.shift();
+                height+=500;
+            }
+            else {
+                height+=290;
+            }
+        }
+        return complaints;
+    }
+
     async createReport(req: Request, resp: Response): Promise<void>{
         try {
 
@@ -25,13 +50,8 @@ export class ControllerReport {
             const htmlDelegate = compileHTML(reportTemplate);
             
             let height = 0;
-            for(let i = 0; i < data.complaints.length; i++) {
-                if(data.complaints[i].image !== null) {
-                    data.complaints[i].image = await imageToBase64(data.complaints[i].image);
-                    height+=500;
-                }
-                else height+=290;
-            }
+            data.complaints = await this.convertImageToBase64(data.complaints);
+            console.log(data.complaints);
             const html = htmlDelegate(data);
             const options: CreateOptions = {
                 height: `${height + 250}px`,
