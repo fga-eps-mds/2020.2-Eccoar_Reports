@@ -14,6 +14,9 @@ export class ControllerReport {
 
     async createReport(req: Request, resp: Response): Promise<void>{
         try {
+            if (req.body === undefined || req.body === null) {
+                throw new Error("Unable to generate empty report.");
+            }
 
             hbRegisterHelper('exists', (value) => {
                 return value !== null;
@@ -23,7 +26,7 @@ export class ControllerReport {
             const reportTemplate = readFileSync('src/templates/report.handlebars', 'utf-8');
             let data = {...req.body, img: `data:image/png;base64,${img}`};
             const htmlDelegate = compileHTML(reportTemplate);
-            
+
             const parserComplaints = new ParserComplaints();
             const parsedComplaints = await parserComplaints.convertImageToBase64(data.complaints);
             data.complaints = parsedComplaints.complaints;
@@ -31,7 +34,7 @@ export class ControllerReport {
 
             const html = htmlDelegate(data);
             const options: CreateOptions = {
-                height: `${(height) + 250}px`,
+                height: `${height + 250}px`,
                 width: '900px'
             };
             createPDF(html, options).toStream((err, stream) => {
