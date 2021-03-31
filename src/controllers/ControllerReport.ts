@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {compile as compileHTML, registerHelper as hbRegisterHelper} from 'handlebars';
 import { create as createPDF, CreateOptions } from 'html-pdf';
 import {readFileSync, createWriteStream} from 'graceful-fs';
-import * as imageToBase64 from 'image-to-base64';
+import { ParserComplaints } from "../utils/ParserComplaints";
 
 export class ControllerReport {
     async pong (req: Request, resp: Response): Promise<void> {
@@ -24,17 +24,14 @@ export class ControllerReport {
             let data = {...req.body, img: `data:image/png;base64,${img}`};
             const htmlDelegate = compileHTML(reportTemplate);
             
-            let height = 0;
-            for(let i = 0; i < data.complaints.length; i++) {
-                if(data.complaints[i].image !== null) {
-                    data.complaints[i].image = await imageToBase64(data.complaints[i].image);
-                    height+=500;
-                }
-                else height+=290;
-            }
+            const parserComplaints = new ParserComplaints();
+            const parsedComplaints = await parserComplaints.convertImageToBase64(data.complaints);
+            data.complaints = parsedComplaints.complaints;
+            const height = parsedComplaints.height;
+
             const html = htmlDelegate(data);
             const options: CreateOptions = {
-                height: `${height + 250}px`,
+                height: `${(height) + 250}px`,
                 width: '900px'
             };
             createPDF(html, options).toStream((err, stream) => {
