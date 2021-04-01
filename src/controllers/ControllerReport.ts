@@ -44,7 +44,7 @@ export class ControllerReport {
 
             resp.status(201).json({"msg": `Report created at src/${req.body.category}.pdf`});
         } catch(err) {
-            resp.status(400).json({'msg': err.message});
+            resp.status(400).json({"msg": err.message});
         }
     }
 }
