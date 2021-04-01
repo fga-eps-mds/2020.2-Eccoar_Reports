@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Spartan&display=swap');
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: Spartan, sans-serif;
+            color: #484848;
+        }
+
+        h1 {
+            padding-bottom: 0.5rem;
+            font-size: 21px;
+        }
+
+        h3 {
+            font-size: 16px;
+            padding-bottom: 0.2rem;
+        }
+
+        .page {
+            background: #fff;
+            height: 87%;
+            width: 81.5%;
+            position: relative;
+        }
+
+        p {
+            font-size: 14px;
+        }
+
+        .divider {
+            width: 100%;
+            height: 3px;
+            background-color: #cecece;
+            opacity: 50%;
+            margin: 10px 0px;
+        }
+
+        img {
+            height: 200px;
+            margin-top: 10px;
+        }
+
+        .containerImage {
+            height: 500px;
+            max-height: 500px;
+            width: 900px;
+            padding: 2rem;
+        }
+
+        .container {
+            height: 290px;
+            max-height: 290px;
+            width: 900px;
+            padding: 2rem;
+        }
+
+        .header {
+            height: 250px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .logo {
+            height: 150px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img class="logo" src="{{img}}" alt="Logo"/>
+        <h1 class="title">Relatório mensal</h1>
+    </div>
+    <div class="page">
+        {{#each complaints}}
+            <div class="{{#if (exists image)}}containerImage{{else}}container{{/if}}">
+                <h1>{{title}}</h1>
+                <h3>Denúncia criada em {{date}}</h3>
+                <h3>{{votes}} pessoas reportaram esse problema</h3>
+                <p>{{description}}</p>
+                {{#if (exists image)}}
+                    <img src="data:image/png;base64,{{image}}" />
+                {{/if}}
+                <div class="divider"></div>
+            </div>
+        {{/each}}
+    </div>
+</body>
+</html>
