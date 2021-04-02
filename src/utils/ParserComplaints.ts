@@ -5,11 +5,11 @@ import { ParsedComplaint } from './ParsedComplaint';
 
 export class ParserComplaints {
     async convertImageToBase64(complaints: Array<Complaint>): Promise<ParsedComplaint> {
-        let queueBase64Resolve = [];
+        const queueBase64Resolve = [];
         let height = 0;
         for(let i = 0; i < complaints.length; i++) {
-            if(complaints[i].image !== null) {
-                queueBase64Resolve.push(imageToBase64(complaints[i].image));
+            if(complaints[i].picture !== null) {
+                queueBase64Resolve.push(imageToBase64(complaints[i].picture));
                 height += 500;
             }
             else {
@@ -19,12 +19,12 @@ export class ParserComplaints {
         if (queueBase64Resolve.length > 0) {
             await Promise.all(queueBase64Resolve);
             for(let i = 0; i < complaints.length; i++) {
-                if(complaints[i].image !== null) {
-                    complaints[i].image = await queueBase64Resolve.shift();
+                if(complaints[i].picture !== null) {
+                    complaints[i].picture = await queueBase64Resolve.shift();
                 }
             }
         }
-        let parsedComplaint: ParsedComplaint = {complaints, height};
+        const parsedComplaint: ParsedComplaint = {complaints, height};
         return parsedComplaint;
     }
 }

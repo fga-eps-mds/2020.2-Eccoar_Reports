@@ -1,7 +1,7 @@
 export interface Complaint {
-    title: string,
+    name: string,
     description: string,
-    votes: number,
+    votes?: number,
     date: string,
-    image: string
+    picture?: string
 }

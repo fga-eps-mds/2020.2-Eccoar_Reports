@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
+    <title>Relatório</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Spartan&display=swap');
 
@@ -88,13 +88,13 @@
     </div>
     <div class="page">
         {{#each complaints}}
-            <div class="{{#if (exists image)}}containerImage{{else}}container{{/if}}">
-                <h1>{{title}}</h1>
+            <div class="{{#if (exists picture)}}containerImage{{else}}container{{/if}}">
+                <h1>{{name}}</h1>
                 <h3>Denúncia criada em {{date}}</h3>
                 <h3>{{votes}} pessoas reportaram esse problema</h3>
                 <p>{{description}}</p>
-                {{#if (exists image)}}
-                    <img src="data:image/png;base64,{{image}}" />
+                {{#if (exists picture)}}
+                    <img src="data:image/png;base64,{{picture}}" />
                 {{/if}}
                 <div class="divider"></div>
             </div>
