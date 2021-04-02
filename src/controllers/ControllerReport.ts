@@ -6,8 +6,18 @@ import {
 import { create as createPDF, CreateOptions } from 'html-pdf';
 import { readFileSync, createWriteStream } from 'graceful-fs';
 import { ParserComplaints } from '@utils/ParserComplaints';
+import { PDFService } from 'src/services/PDFService';
+import { S3Service } from 'src/services/S3Service';
 
 export class ControllerReport {
+
+    s3Service: S3Service;
+    pdfService: PDFService;
+    constructor(){
+        this.s3Service = new S3Service();
+        this.pdfService = new PDFService();
+    }
+
 	async pong(req: Request, resp: Response): Promise<void> {
 		const pingPong = {
 			ping: 'pong',
@@ -40,26 +50,18 @@ export class ControllerReport {
 			data.complaints = parsedComplaints.complaints;
 			const height = parsedComplaints.height;
 
-			const html = htmlDelegate(data);
-			const options: CreateOptions = {
-				height: `${height + 250}px`,
-				width: '900px',
-			};
-			createPDF(html, options).toStream((err, stream) => {
-				if (err) {
-					resp.status(400);
-					resp.json({ message: err });
-					return;
-				}
-				stream.pipe(createWriteStream(`src/${req.body.category}.pdf`));
-			});
-
-			resp.status(201).json({
-				msg: `Report created at src/${req.body.category}.pdf`,
-			});
-		} catch (err) {
-			resp.status(400);
-			resp.json({ msg: err.message });
-		}
-	}
+            const html = htmlDelegate(data);
+        
+            this.pdfService.createPDF(html, height, async (stream) => {
+                const url = await this.s3Service.uploadPDF(req.body.category, stream);
+                resp.status(201).json({ 
+                    "reportName": url.Key,
+                    "category": req.body.category,
+                    "location": url.Location
+                });
+            });
+        } catch(err) {
+            resp.status(400).json({"msg": err.message});
+        }
+    }
 }
