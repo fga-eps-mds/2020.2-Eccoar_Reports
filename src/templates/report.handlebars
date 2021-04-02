@@ -66,7 +66,7 @@
         }
 
         .header {
-            height: 250px;
+            height: 290px;
             width: 100%;
             padding: 2rem;
         }
@@ -85,13 +85,13 @@
     <div class="header">
         <img class="logo" src="{{img}}" alt="Logo"/>
         <h1 class="title">Relatório mensal</h1>
+        <h3> Estes problemas foram relatados por pelo menos 10 pessoas em suas vizinhanças. Entendemos que suas vidas diárias estão sendo afetadas por tais problemas em certo nível.</h3>
     </div>
     <div class="page">
         {{#each complaints}}
             <div class="{{#if (exists picture)}}containerImage{{else}}container{{/if}}">
                 <h1>{{name}}</h1>
                 <h3>Denúncia criada em {{date}}</h3>
-                <h3>{{votes}} pessoas reportaram esse problema</h3>
                 <p>{{description}}</p>
                 {{#if (exists picture)}}
                     <img src="data:image/png;base64,{{picture}}" />

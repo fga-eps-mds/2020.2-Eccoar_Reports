@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
-import {compile as compileHTML, registerHelper as hbRegisterHelper} from 'handlebars';
+import { compile as compileHTML, registerHelper as hbRegisterHelper } from 'handlebars';
 import { create as createPDF, CreateOptions } from 'html-pdf';
-import {readFileSync, createWriteStream} from 'graceful-fs';
+import { readFileSync } from 'graceful-fs';
 import { ParserComplaints } from "../utils/ParserComplaints";
-import { S3 } from "aws-sdk";
-
-import "dotenv/config";
+import { S3Service } from "../services/S3Service";
+import { PDFService } from "../services/PDFService";
 
 export class ControllerReport {
-    
-    private s3: S3;
 
+    s3Service: S3Service;
+    pdfService: PDFService;
     constructor(){
-        this.s3 = new S3();
+        this.s3Service = new S3Service();
+        this.pdfService = new PDFService();
     }
-    
+
     async pong (req: Request, resp: Response): Promise<void> {
         const pingPong = {
             ping: "pong"
@@ -43,32 +43,13 @@ export class ControllerReport {
             const height = parsedComplaints.height;
 
             const html = htmlDelegate(data);
-            const options: CreateOptions = {
-                height: `${height + 250}px`,
-                width: '900px'
-            };
-            createPDF(html, options).toStream((err, stream) => {
-                if(err) return resp.status(400).json({"message": err});
-                const date = new Date();
-                const params = {
-                    Key: `${date.getMonth()}-${date.getFullYear()}-${req.body.category}`,
-                    Body: stream,
-                    Bucket: process.env.AWS_BUCKET_NAME,
-                    ContentType: "application/pdf",
-                    ACL: "public-read"
-                };
-
-                this.s3.upload(params, (err, data) => {
-                    if(err){
-                        console.log(err, 'err');
-                        throw new Error(err.message);
-                    }
-                    console.log(">>>>> PDF CREATED AND UPLOADED SUCCESSFULLY");
-                    
-                    resp.status(201).json({ 
-                        "msg": `Report created at src/${req.body.category}.pdf`,
-                        "location": data.Location 
-                    });
+        
+            this.pdfService.createPDF(html, height, async (stream) => {
+                const url = await this.s3Service.uploadPDF(req.body.category, stream);
+                resp.status(201).json({ 
+                    "reportName": url.Key,
+                    "category": req.body.category,
+                    "location": url.Location
                 });
             });
         } catch(err) {

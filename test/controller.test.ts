@@ -13,23 +13,20 @@ const mockResponse = () => {
 
 const mockReport = {
     complaints: [{
-        "title": "Ibuprofen",
+        "name": "Ibuprofen",
         "date": "10/25/2020",
-        "votes": 211,
         "description": "1P6M2SvMCvcyHaH4Q5dHNjj2uaSC3aFqN1",
-        "image": null
+        "picture": null
       }, {
-        "title": "Terazosin Hydrochloride",
+        "name": "Terazosin Hydrochloride",
         "date": "9/26/2020",
-        "votes": 196,
         "description": "15E1HiYEYGrTrb34TWDQpLRPMwSuvoYEKV",
-        "image": null
+        "picture": null
       }, {
-        "title": "ESIKA HD COLOR HIGH DEFINITION COLOR SPF 20",
+        "name": "ESIKA HD COLOR HIGH DEFINITION COLOR SPF 20",
         "date": "9/6/2020",
-        "votes": 425,
         "description": "16QY4xHS5u69cbEwFDYwefsNevLyoaLQDm",
-        "image": null
+        "picture": null
       }
     ],
     height: 870
@@ -54,25 +51,22 @@ describe("Report creation", () => {
         mReq.body = {
             category: "Hole",
             complaints: [{
-                "title": "Ibuprofen",
-                "date": "10/25/2020",
-                "votes": 211,
-                "description": "1P6M2SvMCvcyHaH4Q5dHNjj2uaSC3aFqN1",
-                "image": null
-              }, {
-                "title": "Terazosin Hydrochloride",
-                "date": "9/26/2020",
-                "votes": 196,
-                "description": "15E1HiYEYGrTrb34TWDQpLRPMwSuvoYEKV",
-                "image": null
-              }, {
-                "title": "ESIKA HD COLOR HIGH DEFINITION COLOR SPF 20",
-                "date": "9/6/2020",
-                "votes": 425,
-                "description": "16QY4xHS5u69cbEwFDYwefsNevLyoaLQDm",
-                "image": null
-              }
-            ]
+              "name": "Ibuprofen",
+              "date": "10/25/2020",
+              "description": "1P6M2SvMCvcyHaH4Q5dHNjj2uaSC3aFqN1",
+              "picture": null
+            }, {
+              "name": "Terazosin Hydrochloride",
+              "date": "9/26/2020",
+              "description": "15E1HiYEYGrTrb34TWDQpLRPMwSuvoYEKV",
+              "picture": null
+            }, {
+              "name": "ESIKA HD COLOR HIGH DEFINITION COLOR SPF 20",
+              "date": "9/6/2020",
+              "description": "16QY4xHS5u69cbEwFDYwefsNevLyoaLQDm",
+              "picture": null
+            }
+          ]
         };
         const mResp = mockResponse();
         jest.spyOn(ParserComplaints.prototype, 'convertImageToBase64').mockImplementation(() => Promise.resolve(mockReport));
