@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { compile as compileHTML, registerHelper as hbRegisterHelper } from 'handlebars';
-import { create as createPDF, CreateOptions } from 'html-pdf';
 import { readFileSync } from 'graceful-fs';
 import { ParserComplaints } from "../utils/ParserComplaints";
 import { S3Service } from "../services/S3Service";
