@@ -3,8 +3,7 @@ import {
 	compile as compileHTML,
 	registerHelper as hbRegisterHelper,
 } from 'handlebars';
-import { create as createPDF, CreateOptions } from 'html-pdf';
-import { readFileSync, createWriteStream } from 'graceful-fs';
+import { readFileSync } from 'graceful-fs';
 import { ParserComplaints } from '@utils/ParserComplaints';
 import { PDFService } from 'src/services/PDFService';
 import { S3Service } from 'src/services/S3Service';

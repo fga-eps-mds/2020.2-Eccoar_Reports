@@ -70,14 +70,14 @@ describe("Report creation", () => {
         jest.spyOn(ParserComplaints.prototype, 'convertImageToBase64').mockImplementation(() => Promise.resolve(mockReport));
         await controller.createReport(mReq, mResp);
         expect(mResp.status).toHaveBeenCalledWith(201);
-        expect(mResp.json).toHaveBeenCalledWith({"msg": `Report created at src/Hole.pdf`})
+        expect(mResp.json).toHaveBeenCalledWith({"msg": `Report created at src/Hole.pdf`});
     });
 
-	test('should fail due to lack of specified category', () => {
-		const controller = new ControllerReport();
-		const mReq = {} as Request;
-		const mResp = mockResponse();
-		controller.createReport(mReq, mResp);
-		expect(mResp.status).toHaveBeenCalledWith(400);
-	});
+    test("should fail due to lack of specified category", async () => {
+        const controller = new ControllerReport();
+        const mReq = {} as Request;
+        const mResp = mockResponse();
+        await controller.createReport(mReq, mResp);
+        expect(mResp.status).toHaveBeenCalledWith(400);
+    });
 });
