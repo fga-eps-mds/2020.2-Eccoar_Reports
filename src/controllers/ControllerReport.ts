@@ -46,7 +46,11 @@ export class ControllerReport {
 				width: '900px',
 			};
 			createPDF(html, options).toStream((err, stream) => {
-				if (err) return resp.status(400).json({ message: err });
+				if (err) {
+					resp.status(400);
+					resp.json({ message: err });
+					return;
+				}
 				stream.pipe(createWriteStream(`src/${req.body.category}.pdf`));
 			});
 
@@ -54,7 +58,8 @@ export class ControllerReport {
 				msg: `Report created at src/${req.body.category}.pdf`,
 			});
 		} catch (err) {
-			resp.status(400).json({ msg: err.message });
+			resp.status(400);
+			resp.json({ msg: err.message });
 		}
 	}
 }
