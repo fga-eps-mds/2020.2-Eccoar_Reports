@@ -9,5 +9,5 @@ app.use(express.json());
 app.use(cors());
 app.use(routers);
 app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`)
+	console.log(`Listening on port ${PORT}`);
 });
