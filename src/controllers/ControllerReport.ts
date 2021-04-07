@@ -5,7 +5,7 @@ import {
 } from 'handlebars';
 import { create as createPDF, CreateOptions } from 'html-pdf';
 import { readFileSync, createWriteStream } from 'graceful-fs';
-import { ParserComplaints } from '../utils/ParserComplaints';
+import { ParserComplaints } from '@utils/ParserComplaints';
 
 export class ControllerReport {
 	async pong(req: Request, resp: Response): Promise<void> {

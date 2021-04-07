@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 
-import { ControllerReport } from './controllers/ControllerReport';
+import { ControllerReport } from '@controllers/ControllerReport';
 
 const routers = Router();
 const controller = new ControllerReport();

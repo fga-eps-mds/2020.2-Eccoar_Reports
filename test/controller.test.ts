@@ -1,7 +1,7 @@
-import { ControllerReport } from '../src/controllers/ControllerReport';
+import { ControllerReport } from '@controllers/ControllerReport';
 import { Request, Response } from 'express';
-import { ParserComplaints } from '../src/utils/ParserComplaints';
-import { ParsedComplaint } from '../src/utils/ParsedComplaint';
+import { ParserComplaints } from '@utils/ParserComplaints';
+import { ParsedComplaint } from '@utils/ParsedComplaint';
 
 const mockResponse = () => {
 	const res: Response = {} as Response;
