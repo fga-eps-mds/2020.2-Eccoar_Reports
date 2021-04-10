@@ -53,7 +53,7 @@
 		"html-pdf": "^2.2.0",
 		"image-to-base64": "^2.1.1",
 		"dotenv": "8.2.0",
-    	"aws-sdk": "2.878.0",
+		"aws-sdk": "2.878.0",
 		"morgan": "^1.10.0"
 	},
 	"lint-staged": {

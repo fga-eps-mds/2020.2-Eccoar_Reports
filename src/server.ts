@@ -1,8 +1,8 @@
 import * as express from 'express';
 import routers from './routes';
 import * as cors from 'cors';
-import * as morgan from "morgan";
-import handleErrors from './utils/ErrorHadler';
+import * as morgan from 'morgan';
+import handleErrors from '@utils/ErrorHadler';
 
 const app = express();
 const PORT = process.env.APP_PORT || 5000;

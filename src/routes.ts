@@ -10,8 +10,11 @@ routers.get('/api/ping', (req: Request, resp: Response) => {
 	controller.pong(req, resp);
 });
 
-routers.post("/api/report/create", (req: Request, resp: Response, next: NextFunction) => {
-    controller.createReport(req, resp, next);
-});
+routers.post(
+	'/api/report/create',
+	(req: Request, resp: Response, next: NextFunction) => {
+		controller.createReport(req, resp, next);
+	},
+);
 
 export default routers;

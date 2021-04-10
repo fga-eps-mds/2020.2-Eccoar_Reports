@@ -13,7 +13,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"@controllers/*": ["./src/controllers/*"],
-			"@utils/*": ["./src/utils/*"]
+			"@utils/*": ["./src/utils/*"],
+			"@services/*": ["./src/services/*"]
 		}
 	},
 	"include": ["src", "test"],
