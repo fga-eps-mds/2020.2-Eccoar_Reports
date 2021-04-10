@@ -1,9 +1,9 @@
 jest.useFakeTimers("modern");
 
 import { ControllerReport } from '../src/controllers/ControllerReport';
-import { Request, Response } from 'express';
-import { ParserComplaints } from '../src/utils/ParserComplaints';
+import { NextFunction, Request, Response } from 'express';
 import { ParsedComplaint } from '../src/utils/ParsedComplaint';
+
 
 const mockResponse = () => {
     const res: Response = {} as Response;
@@ -11,6 +11,11 @@ const mockResponse = () => {
     res.json = jest.fn().mockReturnValue(res);
     return res;
 };
+
+jest.mock('html-pdf', () =>({
+  ...(jest.requireActual('html-pdf')),
+  create: jest.fn()
+}));
 
 const mockReport = {
     complaints: [{
@@ -31,7 +36,7 @@ const mockReport = {
       }
     ],
     height: 870
-} as ParsedComplaint
+} as ParsedComplaint;
 
 describe("pong", () => {
 
@@ -70,17 +75,23 @@ describe("Report creation", () => {
           ]
         };
         const mResp = mockResponse();
-        jest.spyOn(ParserComplaints.prototype, 'convertImageToBase64').mockImplementation(() => Promise.resolve(mockReport));
-        await controller.createReport(mReq, mResp);
-        expect(mResp.status).toHaveBeenCalledWith(201);
-        expect(mResp.json).toHaveBeenCalledWith({"msg": `Report created at src/Hole.pdf`});
+        
+        const mNext = jest.fn();
+        await controller.createReport(mReq, mResp, mNext);
+        expect(mNext).toHaveBeenCalled();
     });
 
     test("should fail due to lack of specified category", async () => {
-        const controller = new ControllerReport();
-        const mReq = {} as Request;
-        const mResp = mockResponse();
-        await controller.createReport(mReq, mResp);
-        expect(mResp.status).toHaveBeenCalledWith(400);
+      const controller = new ControllerReport();
+      const mReq = {} as Request;
+      const mResp = mockResponse();
+      const mNext = () => {
+        mResp.status(400).json({
+          status: 'error',
+          message: 'Unable to generate empty report.'
+        });
+      };
+      await controller.createReport(mReq, mResp, mNext as NextFunction);
+      expect(mResp.status).toHaveBeenCalledWith(400);
     });
 });

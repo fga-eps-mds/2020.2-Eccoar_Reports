@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { compile as compileHTML, registerHelper as hbRegisterHelper } from 'handlebars';
 import { readFileSync } from 'graceful-fs';
 import { ParserComplaints } from "../utils/ParserComplaints";
 import { S3Service } from "../services/S3Service";
 import { PDFService } from "../services/PDFService";
+import { BadRequest } from '../utils/ErrorHadler';
 
 export class ControllerReport {
 
@@ -17,14 +18,14 @@ export class ControllerReport {
     async pong (req: Request, resp: Response): Promise<void> {
         const pingPong = {
             ping: "pong"
-        }
+        };
         resp.status(200).json(pingPong);
     }
 
-    async createReport(req: Request, resp: Response): Promise<void>{
+    async createReport(req: Request, resp: Response, next: NextFunction): Promise<void>{
         try {
-            if (req.body === undefined || req.body === null) {
-                throw new Error("Unable to generate empty report.");
+            if (!(Object.keys(req.body).length)) {
+                throw new BadRequest("Unable to generate empty report.");
             }
 
             hbRegisterHelper('exists', (value) => {
@@ -42,7 +43,6 @@ export class ControllerReport {
             const height = parsedComplaints.height;
 
             const html = htmlDelegate(data);
-        
             this.pdfService.createPDF(html, height, async (stream) => {
                 const url = await this.s3Service.uploadPDF(req.body.category, stream);
                 resp.status(201).json({ 
@@ -52,7 +52,7 @@ export class ControllerReport {
                 });
             });
         } catch(err) {
-            resp.status(400).json({"msg": err.message});
+            next(err);
         }
     }
 }
