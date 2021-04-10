@@ -20,14 +20,8 @@ export class S3Service {
             ContentType: "application/pdf",
             ACL: "public-read"
         };
-
-        const upload = this.s3.upload(params, (err) => {
-            if(err){
-                console.log(err, 'err');
-                throw new Error(err.message);
-            }
-            console.log(">>>>> PDF CREATED AND UPLOADED SUCCESSFULLY");
-        }).promise();
+        
+        const upload = this.s3.upload(params).promise();
         return upload;
     }
     
