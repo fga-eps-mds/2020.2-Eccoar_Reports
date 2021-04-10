@@ -24,7 +24,7 @@ export class ControllerReport {
 
             const img = readFileSync('src/assets/logo.png').toString('base64');
             const reportTemplate = readFileSync('src/templates/report.handlebars', 'utf-8');
-            let data = {...req.body, img: `data:image/png;base64,${img}`};
+            const data = {...req.body, img: `data:image/png;base64,${img}`};
             const htmlDelegate = compileHTML(reportTemplate);
 
             const parserComplaints = new ParserComplaints();
