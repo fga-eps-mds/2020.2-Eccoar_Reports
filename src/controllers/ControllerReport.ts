@@ -1,50 +1,72 @@
-import { Request, Response } from "express";
-import {compile as compileHTML, registerHelper as hbRegisterHelper} from 'handlebars';
-import { create as createPDF, CreateOptions } from 'html-pdf';
-import {readFileSync, createWriteStream} from 'graceful-fs';
-import { ParserComplaints } from "../utils/ParserComplaints";
+import { NextFunction, Request, Response } from 'express';
+import {
+	compile as compileHTML,
+	registerHelper as hbRegisterHelper,
+} from 'handlebars';
+import { readFileSync } from 'graceful-fs';
+import { ParserComplaints } from '@utils/ParserComplaints';
+import { PDFService } from '@services/PDFService';
+import { S3Service } from '@services/S3Service';
+import { BadRequest } from '@utils/ErrorHadler';
 
 export class ControllerReport {
-    async pong (req: Request, resp: Response): Promise<void> {
-        const pingPong = {
-            ping: "pong"
-        }
-        resp.status(200).json(pingPong);
-    }
+	s3Service: S3Service;
+	pdfService: PDFService;
+	constructor() {
+		this.s3Service = new S3Service();
+		this.pdfService = new PDFService();
+	}
 
-    async createReport(req: Request, resp: Response): Promise<void>{
-        try {
-            if (req.body === undefined || req.body === null) {
-                throw new Error("Unable to generate empty report.");
-            }
+	async pong(req: Request, resp: Response): Promise<void> {
+		const pingPong = {
+			ping: 'pong',
+		};
+		resp.status(200).json(pingPong);
+	}
 
-            hbRegisterHelper('exists', (value) => {
-                return value !== null;
-            });
+	async createReport(
+		req: Request,
+		resp: Response,
+		next: NextFunction,
+	): Promise<void> {
+		try {
+			if (!Object.keys(req.body).length) {
+				throw new BadRequest('Unable to generate empty report.');
+			}
 
-            const img = readFileSync('src/assets/logo.png').toString('base64');
-            const reportTemplate = readFileSync('src/templates/report.handlebars', 'utf-8');
-            const data = {...req.body, img: `data:image/png;base64,${img}`};
-            const htmlDelegate = compileHTML(reportTemplate);
+			hbRegisterHelper('exists', (value) => {
+				return value !== null;
+			});
 
-            const parserComplaints = new ParserComplaints();
-            const parsedComplaints = await parserComplaints.convertImageToBase64(data.complaints);
-            data.complaints = parsedComplaints.complaints;
-            const height = parsedComplaints.height;
+			const img = readFileSync('src/assets/logo.png').toString('base64');
+			const reportTemplate = readFileSync(
+				'src/templates/report.handlebars',
+				'utf-8',
+			);
+			const data = { ...req.body, img: `data:image/png;base64,${img}` };
+			const htmlDelegate = compileHTML(reportTemplate);
 
-            const html = htmlDelegate(data);
-            const options: CreateOptions = {
-                height: `${height + 250}px`,
-                width: '900px'
-            };
-            createPDF(html, options).toStream((err, stream) => {
-                if(err) return resp.status(400).json({"message": err});
-                stream.pipe(createWriteStream(`src/${req.body.category}.pdf`));
-            });
+			const parserComplaints = new ParserComplaints();
+			const parsedComplaints = await parserComplaints.convertImageToBase64(
+				data.complaints,
+			);
+			data.complaints = parsedComplaints.complaints;
+			const height = parsedComplaints.height;
 
-            resp.status(201).json({"msg": `Report created at src/${req.body.category}.pdf`});
-        } catch(err) {
-            resp.status(400).json({"msg": err.message});
-        }
-    }
+			const html = htmlDelegate(data);
+			this.pdfService.createPDF(html, height, async (stream) => {
+				const url = await this.s3Service.uploadPDF(
+					req.body.category,
+					stream,
+				);
+				resp.status(201).json({
+					reportName: url.Key,
+					category: req.body.category,
+					location: url.Location,
+				});
+			});
+		} catch (err) {
+			next(err);
+		}
+	}
 }
