@@ -14,6 +14,8 @@ stages:
     - main
     - devel
     - tags
+  except:
+    - merge_requests
 
 ########### Code ###########
 
@@ -75,6 +77,8 @@ sonar metrics:
   only:
     - main
     - 97_configuracao_pipeline
+  except:
+    - merge_requests
   artifacts:
     public: true
     paths:
@@ -110,6 +114,8 @@ build homolog:
   only:
     - main
     - 97_configuracao_pipeline
+  except:
+    - merge_requests
   extends:
     - .build_
 
@@ -119,6 +125,8 @@ build prod:
     DOCKER_IMAGE: $DOCKER_USER/$CI_PROJECT_NAME
   only:
     - tags
+  except:
+    - merge_requests
   extends:
     - .build_
 
@@ -147,6 +155,8 @@ helm hm:
   only:
     - main
     - 97_configuracao_pipeline
+  except:
+    - merge_requests
   extends:
     - .helm_build
 
@@ -158,6 +168,8 @@ helm prod:
     CHART_VERSION: $CI_COMMIT_TAG
   only:
     - tags
+  except:
+    - merge_requests
   extends:
     - .helm_build
 
@@ -186,6 +198,8 @@ deploy hm:
   only:
     - main
     - 97_configuracao_pipeline
+  except:
+    - merge_requests
   extends:
     - .deploy_
 
@@ -202,5 +216,7 @@ deploy prod:
     CHART_VERSION: $CI_COMMIT_TAG
   only:
     - tags
+  except:
+    - merge_requests
   extends:
     - .deploy_
