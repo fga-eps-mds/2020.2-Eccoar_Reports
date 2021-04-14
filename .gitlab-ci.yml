@@ -15,7 +15,7 @@ stages:
     - devel
     - tags
   except:
-    - merge_requests
+    - external_pull_requests
 
 ########### Code ###########
 
@@ -78,7 +78,7 @@ sonar metrics:
     - main
     - 97_configuracao_pipeline
   except:
-    - merge_requests
+    - external_pull_requests
   artifacts:
     public: true
     paths:
@@ -115,7 +115,7 @@ build homolog:
     - main
     - 97_configuracao_pipeline
   except:
-    - merge_requests
+    - external_pull_requests
   extends:
     - .build_
 
@@ -126,7 +126,7 @@ build prod:
   only:
     - tags
   except:
-    - merge_requests
+    - external_pull_requests
   extends:
     - .build_
 
@@ -156,7 +156,7 @@ helm hm:
     - main
     - 97_configuracao_pipeline
   except:
-    - merge_requests
+    - external_pull_requests
   extends:
     - .helm_build
 
@@ -169,7 +169,7 @@ helm prod:
   only:
     - tags
   except:
-    - merge_requests
+    - external_pull_requests
   extends:
     - .helm_build
 
@@ -199,7 +199,7 @@ deploy hm:
     - main
     - 97_configuracao_pipeline
   except:
-    - merge_requests
+    - external_pull_requests
   extends:
     - .deploy_
 
@@ -217,6 +217,6 @@ deploy prod:
   only:
     - tags
   except:
-    - merge_requests
+    - external_pull_requests
   extends:
     - .deploy_
