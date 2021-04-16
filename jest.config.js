@@ -1,6 +1,9 @@
 module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
+	collectCoverage: true,
+	testResultsProcessor: 'jest-sonar-reporter',
+	coveragePathIgnorePatterns: ['/node_modules/', '/test/', '/db/'],
 	testPathIgnorePatterns: ['<rootDir>/build'],
 	moduleNameMapper: {
 		'@controllers/(.*)': '<rootDir>/src/controllers/$1',
